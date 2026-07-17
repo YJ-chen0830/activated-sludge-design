@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>廢水處理槽體設計（活性污泥法） | Wastewater Treatment — Activated Sludge Process Design</title>
+<script src="https://yj-chen0830.github.io/jrh-core/jrh-core.js?v=3" defer></script>
+<style>
+  :root{--navy:#0b1f3a;--navy2:#13284a;--gold:#c9a14a;--gold2:#e0bf6e;--bg:#f5f3ee;--ink:#1c2530;--line:#d8d2c2;}
+  *{box-sizing:border-box;}
+  body{margin:0;font-family:"Noto Sans TC","Segoe UI",sans-serif;background:var(--bg);color:var(--ink);}
+  header{background:linear-gradient(135deg,var(--navy),var(--navy2));color:#f5f3ee;padding:28px 32px;}
+  header h1{margin:0;font-size:22px;}
+  header span{color:var(--gold2);font-size:13px;display:block;margin-top:4px;}
+  main{max-width:1060px;margin:0 auto;padding:28px 20px 60px;}
+  .grid{display:grid;grid-template-columns:340px 1fr;gap:24px;}
+  @media(max-width:820px){.grid{grid-template-columns:1fr;}}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:22px 24px;box-shadow:0 2px 8px rgba(0,0,0,.05);}
+  .card h2{font-size:14.5px;margin:0 0 18px;color:var(--navy);font-weight:700;display:flex;align-items:center;gap:8px;border-bottom:2px solid var(--gold);padding-bottom:10px;}
+  label{display:block;font-size:12px;color:#666;margin:10px 0 4px;font-weight:500;}
+  input,select{width:100%;padding:8px 11px;border:1.5px solid var(--line);border-radius:7px;font-size:13.5px;background:#fafaf8;}
+  input:focus,select:focus{outline:none;border-color:var(--gold);}
+  input[readonly]{background:#f1eee6;color:#6a6252;}
+  .sec{font-size:12px;font-weight:700;color:var(--navy);margin:16px 0 6px;border-left:4px solid var(--gold);padding-left:9px;letter-spacing:.04em;text-transform:uppercase;}
+  .note{font-size:11.5px;color:#999;margin-top:12px;line-height:1.75;background:#f9f7f2;border-radius:6px;padding:9px 12px;}
+  button.calc-btn{margin-top:16px;width:100%;padding:12px;border:none;border-radius:8px;background:var(--navy);color:#fff;font-size:14.5px;font-weight:700;cursor:pointer;}
+  button.calc-btn:hover{background:var(--navy2);}
+  button.pro-btn{margin-top:12px;width:100%;padding:12px;border:none;border-radius:8px;background:var(--gold);color:var(--navy);font-size:14.5px;font-weight:700;cursor:pointer;}
+  button.pro-btn:hover{filter:brightness(1.08);}
+  table{width:100%;border-collapse:collapse;margin-top:10px;border:1px solid var(--line);border-radius:8px;overflow:hidden;}
+  th{background:var(--navy);color:#f5f3ee;font-weight:600;font-size:12px;padding:9px 10px;text-align:left;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+  td{padding:9px 10px;font-size:13px;border-bottom:1px solid var(--line);vertical-align:top;}
+  tr:nth-child(even) td{background:#f9f7f3;}
+  td:last-child{text-align:right;font-weight:700;}
+  .ok{color:#1a7d3a;font-weight:700;}
+  .ng{color:#c0392b;font-weight:700;}
+  .hint-good{color:#1a7d3a;font-weight:700;}
+  .hint-warn{color:#9a6700;font-weight:700;}
+  details.proc{margin-top:16px;border:1px solid var(--line);border-radius:8px;background:#fafaf8;overflow:hidden;}
+  details.proc summary{cursor:pointer;padding:10px 14px;font-weight:700;font-size:13px;color:var(--navy);user-select:none;list-style:none;display:flex;align-items:center;gap:6px;}
+  details.proc summary::before{content:"▶";font-size:10px;transition:transform .2s;}
+  details[open].proc summary::before{transform:rotate(90deg);}
+  details.proc pre{margin:0;padding:12px 16px 16px;font-family:"Courier New",monospace;font-size:11.5px;line-height:1.9;white-space:pre-wrap;color:#2c3e50;border-top:1px solid var(--line);}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  .proj-section{background:#fff;border:1px solid var(--gold);border-radius:10px;padding:18px 22px;margin-bottom:20px;}
+  .proj-section h3{margin:0 0 12px;color:var(--navy);font-size:14px;font-weight:700;}
+  .proj-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+  @media(max-width:600px){.proj-grid,.row2{grid-template-columns:1fr;}}
+  .mob-tabs{display:none;}
+  @media screen and (max-width:767px){
+    .mob-tabs{display:flex;background:var(--bg);border-bottom:2px solid var(--line);margin:0 -20px 0;padding:0 20px;}
+    .mob-tab{flex:1;padding:11px 4px;text-align:center;font-size:13.5px;font-weight:700;color:#888;cursor:pointer;background:transparent;border:none;border-bottom:3px solid transparent;}
+    .mob-tab.active{color:var(--navy);border-bottom-color:var(--gold);}
+    .grid{display:block;}
+    .grid>.card{display:none;}
+    .grid>.card.mob-active{display:block;}
+  }
+  @media print{
+    header,.no-print{display:none!important;}
+    body{background:#fff;margin:0;font-size:9pt;line-height:1.5;color:#111;}
+    main{padding:0;max-width:100%!important;}
+    .grid{grid-template-columns:1fr!important;gap:10pt!important;}
+    .card{box-shadow:none!important;border:1px solid #ccc!important;border-radius:4pt!important;padding:10pt 12pt!important;break-inside:avoid;}
+    .card h2{font-size:10.5pt!important;padding-bottom:6pt!important;margin-bottom:9pt!important;}
+    label{font-size:8pt!important;margin:6pt 0 2pt!important;}
+    .sec{font-size:8pt!important;margin:10pt 0 4pt!important;}
+    .note{font-size:7.5pt!important;padding:6pt 9pt!important;}
+    table{border:1px solid #bbb!important;border-radius:0!important;margin-top:6pt!important;}
+    th{font-size:8pt!important;padding:5pt 7pt!important;background:#0b1f3a!important;color:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    td{font-size:8.5pt!important;padding:5pt 7pt!important;}
+    tr:nth-child(even) td{background:#f5f5f5!important;}
+    details.proc{display:block!important;margin-top:10pt!important;border:1pt solid #0b1f3a!important;border-radius:4pt!important;break-inside:avoid;background:#f9f9f6!important;}
+    details.proc>summary{display:none!important;}
+    details.proc::before{content:"📋  計算過程（供第三方檢核）";display:block;font-weight:700;font-size:8pt;color:#0b1f3a;padding:6pt 10pt 4pt;border-bottom:1px solid #ccc;letter-spacing:.04em;}
+    details.proc>pre{font-size:7pt!important;line-height:1.65!important;white-space:pre-wrap!important;padding:6pt 10pt 10pt!important;color:#1a1a1a!important;font-family:"Courier New",monospace!important;}
+    .proj-section{border:1.5pt solid #0b1f3a!important;border-radius:4pt!important;}
+    button.pro-btn,button.calc-btn{display:none!important;}
+    @page{margin:15mm 12mm;size:A4;}
+  }
+</style>
+</head>
+<body data-tool="asd">
+<header>
+  <a href="https://yj-chen0830.github.io/engineering-hub/" style="color:var(--gold2);font-size:12.5px;text-decoration:none;display:inline-block;margin-bottom:8px;">← 返回工程計算中心</a>
+  <h1>廢水處理槽體設計（活性污泥法）</h1>
+  <span>依 Metcalf &amp; Eddy 活性污泥法質量平衡設計曝氣槽體積與需氧量</span>
+</header>
+<main>
+
+<div class="proj-section no-print" id="projSection">
+  <h3>📁 專案資訊（列印時帶入計算書封面）</h3>
+  <div class="proj-grid">
+    <div><label>工程名稱</label><input id="pj-name" placeholder="○○污水處理工程"></div>
+    <div><label>工程地點</label><input id="pj-loc" placeholder="○○市○○區"></div>
+    <div><label>承造廠商</label><input id="pj-contractor" placeholder="○○環工股份有限公司"></div>
+    <div><label>文件編號</label><input id="pj-docno" placeholder="ASD-CAL-001"></div>
+    <div><label>計算者</label><input id="pj-calc" placeholder="姓名"></div>
+    <div><label>審核者</label><input id="pj-review" placeholder="姓名"></div>
+    <div><label>計算日期</label><input id="pj-date" type="date"></div>
+  </div>
+</div>
+
+<div class="mob-tabs">
+  <button class="mob-tab active" onclick="switchMobTab('asd-in',this)">📋 輸入參數</button>
+  <button class="mob-tab" id="mobTab-asd-r" onclick="switchMobTab('asd-r',this)">📊 計算結果</button>
+</div>
+<div class="grid">
+  <div class="card mob-active" data-tab="asd-in">
+    <h2>輸入參數</h2>
+
+    <div class="sec">設計條件</div>
+    <div class="row2">
+      <div><label>設計流量 Q (CMD, m³/day)</label><input id="asd-Q" type="number" value="1000" step="1" min="0"></div>
+      <div><label>進流 BOD5 濃度 S0 (mg/L)</label><input id="asd-S0" type="number" value="200" step="1" min="0"></div>
+    </div>
+    <div class="row2">
+      <div><label>放流 BOD5 濃度 S (mg/L)</label><input id="asd-S" type="number" value="20" step="1" min="0"></div>
+      <div><label>污泥停留時間 SRT / θc (day)</label><input id="asd-tc" type="number" value="8" step="0.1" min="0"></div>
+    </div>
+
+    <div class="sec">生物處理參數</div>
+    <div class="row2">
+      <div><label>污泥產率係數 Y (kg VSS/kg BOD)</label><input id="asd-Y" type="number" value="0.6" step="0.01" min="0"></div>
+      <div><label>內源呼吸衰減係數 kd (1/day)</label><input id="asd-kd" type="number" value="0.06" step="0.01" min="0"></div>
+    </div>
+    <div class="row2">
+      <div><label>MLVSS 濃度 X (mg/L)</label><input id="asd-X" type="number" value="3000" step="10" min="0"></div>
+      <div><label>需氧量轉換係數 f (BOD5→BODu)</label><input id="asd-f" type="number" value="0.68" step="0.01" min="0"></div>
+    </div>
+    <label>每公斤污泥產生耗氧量係數 1.42</label>
+    <input id="asd-oxy-cell" type="number" value="1.42" step="0.01" readonly>
+
+    <button class="calc-btn" onclick="calcASD()">計算活性污泥法槽體與需氧量</button>
+    <div class="note">依 Metcalf &amp; Eddy 活性污泥法穩態質量平衡公式計算曝氣反應槽體積、HRT、F/M、污泥產量與理論需氧量。BOD、MLVSS 濃度於式中以 kg/m³ 進行單位換算（1 mg/L = 0.001 kg/m³）。本工具僅供初步設計比選，未包含二沉池、回流污泥比、曝氣設備與鼓風機選型、營養鹽平衡等檢討。</div>
+  </div>
+  <div class="card" data-tab="asd-r">
+    <h2>計算結果</h2>
+    <div id="asd-result"><p style="color:#888">尚未計算</p></div>
+    <div class="note"><strong>注意與限制：</strong> 本工具僅計算反應槽體積與需氧量，未包含二沉池設計、迴流污泥比、鼓風機/曝氣設備選型、營養鹽（N/P）平衡。正式設計應由環工技師複核，並應現地水質特性調整設計參數。</div>
+    <details class="proc" id="asd-proc" style="display:none">
+      <summary>📋 計算過程（供第三方檢核）</summary>
+      <pre id="asd-proc-text"></pre>
+    </details>
+    <button class="pro-btn no-print" onclick="openPro()">📄 產出計算書 PDF</button>
+  </div>
+</div>
+
+</main>
+<script>
+function switchMobTab(name,btn){
+  btn.parentElement.querySelectorAll('.mob-tab').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');
+  btn.parentElement.nextElementSibling.querySelectorAll('.card').forEach(function(c){
+    c.classList.toggle('mob-active',c.dataset.tab===name);
+  });
+}
+function openPro(){ JRH.checkEmail(function(){ jrhPrint('廢水處理槽體設計計算書（活性污泥法）'); }); }
+function v(id){return parseFloat(document.getElementById(id).value)||0;}
+function f1(x){return x.toFixed(1);}
+function f2(x){return x.toFixed(2);}
+function f3(x){return x.toFixed(3);}
+function f4(x){return x.toFixed(4);}
+
+function hintRange(value, low, high, unit){
+  if(value>=low && value<=high){
+    return '<span class="hint-good">'+f3(value)+' '+unit+'（落在常見 '+low+'–'+high+' '+unit+' 範圍內）</span>';
+  }
+  if(value<low){
+    return '<span class="hint-warn">'+f3(value)+' '+unit+'（低於常見 '+low+'–'+high+' '+unit+'，請確認負荷與生物量假設）</span>';
+  }
+  return '<span class="hint-warn">'+f3(value)+' '+unit+'（高於常見 '+low+'–'+high+' '+unit+'，請確認槽體容積與操作條件）</span>';
+}
+
+function calcASD(){
+  var Q=v('asd-Q'), S0=v('asd-S0'), S=v('asd-S'), Y=v('asd-Y'), kd=v('asd-kd');
+  var tc=v('asd-tc'), X=v('asd-X'), f=v('asd-f'), oxyCell=v('asd-oxy-cell');
+
+  if(Q<=0 || S0<0 || S<0 || Y<=0 || kd<0 || tc<=0 || X<=0 || f<0 || oxyCell<=0){
+    document.getElementById('asd-result').innerHTML='<p class="ng">請輸入有效正值；其中 Q、Y、θc、X、1.42 必須大於 0。</p>';
+    document.getElementById('asd-proc').style.display='none';
+    return;
+  }
+  if(S0<=S){
+    document.getElementById('asd-result').innerHTML='<p class="ng">進流 BOD5 濃度 S0 應大於放流目標 S，否則無法形成正的去除量 ΔS。</p>';
+    document.getElementById('asd-proc').style.display='none';
+    return;
+  }
+
+  var deltaS = S0 - S;
+  var S0kg = S0/1000;
+  var Skg = S/1000;
+  var deltaSkg = deltaS/1000;
+  var Xkg = X/1000;
+  var denom = Xkg*(1 + kd*tc);
+
+  var V = (Y*tc*Q*deltaSkg)/denom;
+  var HRTday = V/Q;
+  var HRThr = HRTday*24;
+  var FM = (Q*S0kg)/(V*Xkg);
+  var Px = (Y*Q*deltaSkg)/(1 + kd*tc);
+  var O2influent = Q*deltaSkg*f;
+  var O2cell = oxyCell*Px;
+  var O2 = O2influent - O2cell;
+
+  var fmHint = hintRange(FM,0.2,0.6,'kg BOD/kg MLVSS·day','F/M');
+  var hrtHint = hintRange(HRThr,4,8,'hr','HRT');
+
+  document.getElementById('asd-result').innerHTML =
+    '<table><tr><th>項目</th><th>數值</th></tr>'+
+    '<tr><td>反應槽體積 V</td><td>'+f2(V)+' m³</td></tr>'+
+    '<tr><td>水力停留時間 HRT</td><td>'+f2(HRThr)+' hr</td></tr>'+
+    '<tr><td>食微比 F/M</td><td>'+f3(FM)+' kg BOD/kg MLVSS·day</td></tr>'+
+    '<tr><td>污泥產量 Px</td><td>'+f2(Px)+' kg VSS/day</td></tr>'+
+    '<tr><td>理論需氧量 O2</td><td>'+f2(O2)+' kg O2/day</td></tr>'+
+    '<tr><td>F/M 經驗範圍提示</td><td style="text-align:left">'+fmHint+'</td></tr>'+
+    '<tr><td>HRT 經驗範圍提示</td><td style="text-align:left">'+hrtHint+'</td></tr>'+
+    '</table>';
+
+  var p='';
+  p+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  p+='  廢水處理槽體設計計算過程（活性污泥法）\n';
+  p+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n';
+  p+='【輸入條件】\n';
+  p+='  Q  = '+f2(Q)+' m³/day\n';
+  p+='  S0 = '+f2(S0)+' mg/L\n';
+  p+='  S  = '+f2(S)+' mg/L\n';
+  p+='  Y  = '+f3(Y)+' kg VSS/kg BOD\n';
+  p+='  kd = '+f3(kd)+' 1/day\n';
+  p+='  θc = '+f2(tc)+' day\n';
+  p+='  X  = '+f2(X)+' mg/L\n';
+  p+='  f  = '+f3(f)+' (BOD5→BODu)\n';
+  p+='  1.42 = '+f2(oxyCell)+' kg O2/kg VSS（固定值）\n\n';
+  p+='【單位換算】\n';
+  p+='  1 mg/L = 0.001 kg/m³\n';
+  p+='  S0 = '+f2(S0)+' mg/L = '+f3(S0kg)+' kg/m³\n';
+  p+='  S  = '+f2(S)+' mg/L = '+f3(Skg)+' kg/m³\n';
+  p+='  ΔS = (S0−S) = '+f2(deltaS)+' mg/L = '+f3(deltaSkg)+' kg/m³\n';
+  p+='  X  = '+f2(X)+' mg/L = '+f3(Xkg)+' kg/m³\n\n';
+  p+='【一】反應槽體積 V\n';
+  p+='  公式：V = (Y×θc×Q×ΔS) / (X×(1+kd×θc))\n';
+  p+='  代入：V = ('+f3(Y)+'×'+f2(tc)+'×'+f2(Q)+'×'+f3(deltaSkg)+') / ('+f3(Xkg)+'×(1+'+f3(kd)+'×'+f2(tc)+'))\n';
+  p+='       = '+f3(Y*tc*Q*deltaSkg)+' / '+f3(denom)+'\n';
+  p+='       = '+f2(V)+' m³\n\n';
+  p+='【二】水力停留時間 HRT\n';
+  p+='  公式：HRT = V / Q\n';
+  p+='  代入：HRT = '+f2(V)+' / '+f2(Q)+' = '+f4(HRTday)+' day\n';
+  p+='  換算：'+f4(HRTday)+' × 24 = '+f2(HRThr)+' hr\n\n';
+  p+='【三】食微比 F/M\n';
+  p+='  公式：F/M = (Q×S0) / (V×X)\n';
+  p+='  代入：F/M = ('+f2(Q)+'×'+f3(S0kg)+') / ('+f2(V)+'×'+f3(Xkg)+')\n';
+  p+='       = '+f3(Q*S0kg)+' / '+f3(V*Xkg)+'\n';
+  p+='       = '+f3(FM)+' kg BOD/kg MLVSS·day\n\n';
+  p+='【四】污泥產量 Px\n';
+  p+='  公式：Px = Y×Q×ΔS / (1+kd×θc)\n';
+  p+='  代入：Px = '+f3(Y)+'×'+f2(Q)+'×'+f3(deltaSkg)+' / (1+'+f3(kd)+'×'+f2(tc)+')\n';
+  p+='       = '+f3(Y*Q*deltaSkg)+' / '+f3(1+kd*tc)+'\n';
+  p+='       = '+f2(Px)+' kg VSS/day\n\n';
+  p+='【五】理論需氧量 O2\n';
+  p+='  公式：O2 = Q×ΔS×f − 1.42×Px\n';
+  p+='  第一項（BOD5→BODu）= '+f2(Q)+'×'+f3(deltaSkg)+'×'+f3(f)+' = '+f2(O2influent)+' kg O2/day\n';
+  p+='  第二項（細胞氧當量）= 1.42×Px = '+f2(oxyCell)+'×'+f2(Px)+' = '+f2(O2cell)+' kg O2/day\n';
+  p+='  O2 = '+f2(O2influent)+' − '+f2(O2cell)+' = '+f2(O2)+' kg O2/day\n\n';
+  p+='【六】經驗範圍提示（非安全係數判定）\n';
+  p+='  F/M 常見範圍：0.2–0.6 kg BOD/kg MLVSS·day → 本案 = '+f3(FM)+'\n';
+  p+='  HRT 常見範圍：4–8 hr → 本案 = '+f2(HRThr)+' hr\n';
+  if(FM<0.2){
+    p+='  提示：F/M 低於常見範圍，可能偏向低負荷操作，請確認設計目標與生物量設定。\n';
+  }else if(FM>0.6){
+    p+='  提示：F/M 高於常見範圍，可能偏向高負荷操作，請確認槽體容積、SRT 與 MLVSS 假設。\n';
+  }else{
+    p+='  提示：F/M 落在常見設計區間內。\n';
+  }
+  if(HRThr<4){
+    p+='  提示：HRT 低於常見範圍，請確認反應時間是否足夠。\n';
+  }else if(HRThr>8){
+    p+='  提示：HRT 高於常見範圍，請確認是否有過度保守或低負荷設計情形。\n';
+  }else{
+    p+='  提示：HRT 落在常見設計區間內。\n';
+  }
+  p+='\n';
+  p+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n';
+  p+='  參考：Metcalf & Eddy, Wastewater Engineering: Treatment and Reuse\n';
+  p+='  限制：本工具僅計算反應槽體積與需氧量，未包含二沉池、迴流污泥比、鼓風機/曝氣設備選型、營養鹽平衡。\n';
+  p+='  正式設計應由環工技師複核，並應依現地水質與操作條件調整設計參數。\n';
+  p+='━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━';
+
+  document.getElementById('asd-proc-text').textContent=p;
+  document.getElementById('asd-proc').style.display='';
+  if(window.innerWidth<768){var b=document.getElementById('mobTab-asd-r');if(b)switchMobTab('asd-r',b);}
+}
+</script>
+<script>
+window.jrhDocMeta={
+ "doc": "廢水處理槽體設計計算書（活性污泥法）",
+ "codes": [
+  "Metcalf & Eddy, Wastewater Engineering: Treatment and Reuse",
+  "活性污泥法穩態質量平衡設計方程式（曝氣槽體積、污泥產量、需氧量）"
+ ],
+ "notes": [
+  "本工具依活性污泥法穩態質量平衡進行初步設計，BOD5、MLVSS 濃度均以 kg/m³ 進行單位換算後計算。",
+  "本工具僅計算反應槽體積與需氧量，未包含二沉池設計、迴流污泥比、鼓風機/曝氣設備選型、營養鹽（N/P）平衡。",
+  "F/M 與 HRT 顯示者為經驗設計範圍提示，非安全係數式之硬性 OK/NG 判定，正式設計仍應依處理目標與實廠條件調整。",
+  "正式設計應由環工技師複核，並應現地水質特性調整設計參數後，始得作為正式送審文件。"
+ ]
+};
+</script>
+</body>
+</html>
