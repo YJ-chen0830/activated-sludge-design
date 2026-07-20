@@ -146,6 +146,7 @@
   </div>
   <div class="card" data-tab="asd-r">
     <h2>計算結果</h2>
+    <div id="asd-diagram"></div>
     <div id="asd-result"><p style="color:#888">尚未計算</p></div>
     <div class="note"><strong>注意與限制：</strong> 本工具僅計算反應槽體積與需氧量，未包含二沉池設計、迴流污泥比、鼓風機/曝氣設備選型、營養鹽（N/P）平衡。正式設計應由環工技師複核，並應現地水質特性調整設計參數。</div>
     <details class="proc" id="asd-proc" style="display:none">
@@ -182,6 +183,36 @@ function hintRange(value, low, high, unit){
   return '<span class="hint-warn">'+f3(value)+' '+unit+'（高於常見 '+low+'–'+high+' '+unit+'，請確認槽體容積與操作條件）</span>';
 }
 
+/* 活性污泥法是質量平衡模型，不是幾何斷面，所以示意圖畫的是流程圖：進流→
+   曝氣反應槽（含V/HRT/X）→放流，並標示曝氣需氧量與剩餘污泥產量的量——這
+   就是計算式本身在描述的物理模型，不是另外發明的裝飾圖。 */
+function buildASDDiagram(Q,S0,S,V,HRThr,X,Px,O2){
+  var W=460,H=260;
+  var tankX=170,tankY=70,tankW=140,tankH=100;
+  var D=JRH.diagram, s='';
+  s+=D.label(14,16,'活性污泥法質量平衡流程示意圖',{anchor:'start',size:9,color:'#8a8370'});
+  s+=D.arrow(20,tankY+tankH/2,tankX-6,tankY+tankH/2,{color:'#0b1f3a',width:2});
+  s+=D.label(20,tankY+tankH/2-10,'進流 Q='+Q.toFixed(0)+'CMD',{anchor:'start',size:8,color:'#0b1f3a'});
+  s+=D.label(20,tankY+tankH/2+18,'S0='+S0.toFixed(0)+'mg/L',{anchor:'start',size:8,color:'#0b1f3a'});
+  s+='<rect x="'+tankX+'" y="'+tankY+'" width="'+tankW+'" height="'+tankH+'" fill="#eaf1f7" stroke="#0b1f3a" stroke-width="2"/>';
+  s+=D.label(tankX+tankW/2,tankY+22,'曝氣反應槽',{size:10,color:'#0b1f3a',weight:'700'});
+  s+=D.label(tankX+tankW/2,tankY+42,'V='+V.toFixed(1)+'m³',{size:9,color:'#0b1f3a'});
+  s+=D.label(tankX+tankW/2,tankY+60,'X='+X.toFixed(0)+'mg/L',{size:8.5,color:'#5c5442'});
+  s+=D.label(tankX+tankW/2,tankY+78,'HRT='+HRThr.toFixed(1)+'hr',{size:8.5,color:'#5c5442'});
+  var bubbleX=tankX+tankW/2;
+  for(var i=-1;i<=1;i++){
+    s+='<circle cx="'+(bubbleX+i*20)+'" cy="'+(tankY+tankH-10)+'" r="3" fill="none" stroke="#5aa7d6" stroke-width="1.3"/>';
+  }
+  s+=D.arrow(bubbleX,tankY+tankH+30,bubbleX,tankY+tankH+6,{color:'#5aa7d6',width:2});
+  s+=D.label(bubbleX,tankY+tankH+42,'曝氣 O2='+O2.toFixed(1)+'kg/day',{size:8.5,color:'#2f6fa3',weight:'700'});
+  s+=D.arrow(tankX+tankW+6,tankY+tankH/2,W-20,tankY+tankH/2,{color:'#0b1f3a',width:2});
+  s+=D.label(W-20,tankY+tankH/2-10,'放流 Q='+Q.toFixed(0)+'CMD',{anchor:'end',size:8,color:'#0b1f3a'});
+  s+=D.label(W-20,tankY+tankH/2+18,'S='+S.toFixed(0)+'mg/L',{anchor:'end',size:8,color:'#0b1f3a'});
+  s+=D.arrow(tankX+tankW-10,tankY+tankH+4,tankX+tankW+34,tankY+tankH+30,{color:'#9a7b2a',width:1.8});
+  s+=D.label(tankX+tankW+38,tankY+tankH+36,'剩餘污泥 Px='+Px.toFixed(1)+'kg/day',{anchor:'start',size:8,color:'#9a7b2a',weight:'700'});
+  return D.wrap(W,H,s,{maxWidth:440});
+}
+
 function calcASD(){
   var Q=v('asd-Q'), S0=v('asd-S0'), S=v('asd-S'), Y=v('asd-Y'), kd=v('asd-kd');
   var tc=v('asd-tc'), X=v('asd-X'), f=v('asd-f'), oxyCell=v('asd-oxy-cell');
@@ -189,11 +220,13 @@ function calcASD(){
   if(Q<=0 || S0<0 || S<0 || Y<=0 || kd<0 || tc<=0 || X<=0 || f<0 || oxyCell<=0){
     document.getElementById('asd-result').innerHTML='<p class="ng">請輸入有效正值；其中 Q、Y、θc、X、1.42 必須大於 0。</p>';
     document.getElementById('asd-proc').style.display='none';
+    document.getElementById('asd-diagram').innerHTML='';
     return;
   }
   if(S0<=S){
     document.getElementById('asd-result').innerHTML='<p class="ng">進流 BOD5 濃度 S0 應大於放流目標 S，否則無法形成正的去除量 ΔS。</p>';
     document.getElementById('asd-proc').style.display='none';
+    document.getElementById('asd-diagram').innerHTML='';
     return;
   }
 
@@ -215,6 +248,8 @@ function calcASD(){
 
   var fmHint = hintRange(FM,0.2,0.6,'kg BOD/kg MLVSS·day','F/M');
   var hrtHint = hintRange(HRThr,4,8,'hr','HRT');
+
+  if(window.JRH && JRH.diagram) document.getElementById('asd-diagram').innerHTML=buildASDDiagram(Q,S0,S,V,HRThr,X,Px,O2);
 
   document.getElementById('asd-result').innerHTML =
     '<table><tr><th>項目</th><th>數值</th></tr>'+
