@@ -333,7 +333,20 @@ function calcASD(){
   document.getElementById('asd-proc-text').textContent=p;
   document.getElementById('asd-proc').style.display='';
   if(window.innerWidth<768){var b=document.getElementById('mobTab-asd-r');if(b)switchMobTab('asd-r',b);}
+  if(window.JRH && JRH.saveOutput) JRH.saveOutput({Q_cmd:Q});
 }
+
+/* 廢水處理流程：混凝沉澱池的設計流量，跟本工具（活性污泥法）是同一股廢
+   水，理論上使用同一個設計流量Q。 */
+function jrhTryInbound(){
+  if(!(window.JRH && JRH.showInboundBanner))return;
+  JRH.showInboundBanner('csd','混凝沉澱池設計',function(data){
+    document.getElementById('asd-Q').value=data.Q_cmd;
+    calcASD();
+  });
+}
+if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',jrhTryInbound);
+else jrhTryInbound();
 </script>
 <script>
 window.jrhDocMeta={
