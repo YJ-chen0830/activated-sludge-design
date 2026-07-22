@@ -217,8 +217,8 @@ function calcASD(){
   var Q=v('asd-Q'), S0=v('asd-S0'), S=v('asd-S'), Y=v('asd-Y'), kd=v('asd-kd');
   var tc=v('asd-tc'), X=v('asd-X'), f=v('asd-f'), oxyCell=v('asd-oxy-cell');
 
-  if(Q<=0 || S0<0 || S<0 || Y<=0 || kd<0 || tc<=0 || X<=0 || f<0 || oxyCell<=0){
-    document.getElementById('asd-result').innerHTML='<p class="ng">請輸入有效正值；其中 Q、Y、θc、X、1.42 必須大於 0。</p>';
+  if(Q<=0 || S0<0 || S<0 || Y<=0 || kd<0 || tc<=0 || X<=0 || f<=0 || oxyCell<=0){
+    document.getElementById('asd-result').innerHTML='<p class="ng">請輸入有效正值；其中 Q、Y、θc、X、f、1.42 必須大於 0。</p>';
     document.getElementById('asd-proc').style.display='none';
     document.getElementById('asd-diagram').innerHTML='';
     return;
@@ -242,7 +242,7 @@ function calcASD(){
   var HRThr = HRTday*24;
   var FM = (Q*S0kg)/(V*Xkg);
   var Px = (Y*Q*deltaSkg)/(1 + kd*tc);
-  var O2influent = Q*deltaSkg*f;
+  var O2influent = Q*deltaSkg/f;
   var O2cell = oxyCell*Px;
   var O2 = O2influent - O2cell;
 
@@ -302,8 +302,8 @@ function calcASD(){
   p+='       = '+f3(Y*Q*deltaSkg)+' / '+f3(1+kd*tc)+'\n';
   p+='       = '+f2(Px)+' kg VSS/day\n\n';
   p+='【五】理論需氧量 O2\n';
-  p+='  公式：O2 = Q×ΔS×f − 1.42×Px\n';
-  p+='  第一項（BOD5→BODu）= '+f2(Q)+'×'+f3(deltaSkg)+'×'+f3(f)+' = '+f2(O2influent)+' kg O2/day\n';
+  p+='  公式：O2 = Q×ΔS/f − 1.42×Px\n';
+  p+='  第一項（BOD5→BODu，除以f換算為終極需氧量）= '+f2(Q)+'×'+f3(deltaSkg)+'/'+f3(f)+' = '+f2(O2influent)+' kg O2/day\n';
   p+='  第二項（細胞氧當量）= 1.42×Px = '+f2(oxyCell)+'×'+f2(Px)+' = '+f2(O2cell)+' kg O2/day\n';
   p+='  O2 = '+f2(O2influent)+' − '+f2(O2cell)+' = '+f2(O2)+' kg O2/day\n\n';
   p+='【六】經驗範圍提示（非安全係數判定）\n';
